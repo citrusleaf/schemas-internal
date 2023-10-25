@@ -1968,18 +1968,6 @@
                     "dynamic": false,
                     "default": "memory",
                     "enum": ["memory"]
-                  }
-                }
-              }, {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "",
-                    "dynamic": false,
-                    "default": "memory",
-                    "enum": ["memory"]
                   },
                   "commit-to-device": {
                     "type": "boolean",
