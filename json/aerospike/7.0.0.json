@@ -6,6 +6,7 @@
     "properties": {
       "service": {
         "type": "object",
+        "required": ["cluster-name"],
         "additionalProperties": false,
         "properties": {
           "advertise-ipv6": {
@@ -52,11 +53,10 @@
             "dynamic": true
           },
           "debug-allocations": {
-            "type": "string",
+            "type": "boolean",
             "description": "",
             "dynamic": false,
-            "default": "none",
-            "enum": ["none", "transient", "persistent", "all"]
+            "default": "none"
           },
           "disable-udf-execution": {
             "type": "boolean",
@@ -249,7 +249,7 @@
             "description": "",
             "dynamic": false
           },
-          "salt-allocations": {
+          "poison-allocations": {
             "type": "boolean",
             "default": false,
             "description": "",
@@ -1321,7 +1321,6 @@
         "items": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["memory-size"],
           "properties": {
             "name": {
               "type": "string",
@@ -1438,27 +1437,19 @@
               "description": "",
               "dynamic": true
             },
+            "evict-sys-memory-pct": {
+                "type": "integer",
+                "default": 0,
+                "minimum": 0,
+                "maximum": 100,
+                "description": "",
+                "dynamic": true
+              },
             "evict-tenths-pct": {
               "type": "integer",
               "default": 5,
               "minimum": 0,
               "maximum": 4294967295,
-              "description": "",
-              "dynamic": true
-            },
-            "high-water-disk-pct": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0,
-              "maximum": 100,
-              "description": "",
-              "dynamic": true
-            },
-            "high-water-memory-pct": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0,
-              "maximum": 100,
               "description": "",
               "dynamic": true
             },
@@ -1487,14 +1478,6 @@
               "default": 0,
               "minimum": 0,
               "maximum": 4294967295,
-              "description": "",
-              "dynamic": true
-            },
-            "memory-size": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0,
-              "maximum": 18446744073709551615,
               "description": "",
               "dynamic": true
             },
@@ -1608,14 +1591,6 @@
               "default": 4,
               "minimum": 1,
               "maximum": 128,
-              "description": "",
-              "dynamic": true
-            },
-            "stop-writes-pct": {
-              "type": "integer",
-              "default": 90,
-              "minimum": 0,
-              "maximum": 100,
               "description": "",
               "dynamic": true
             },
@@ -1771,7 +1746,7 @@
               }, {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["type", "mounts", "mounts-size-limit"],
+                "required": ["type", "mounts", "mounts-budget"],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -1789,7 +1764,7 @@
                     "dynamic": false,
                     "default": []
                   },
-                  "mounts-high-water-pct": {
+                  "evict-mounts-pct": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 0,
@@ -1797,7 +1772,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "mounts-size-limit": {
+                  "mounts-budget": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 1073741824,
@@ -1809,7 +1784,7 @@
               }, {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["type", "mounts", "mounts-size-limit"],
+                "required": ["type", "mounts", "mounts-budget"],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -1827,7 +1802,7 @@
                     "dynamic": false,
                     "default": []
                   },
-                  "mounts-high-water-pct": {
+                  "evict-mounts-pct": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 0,
@@ -1835,7 +1810,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "mounts-size-limit": {
+                  "mounts-budget": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 4294967296,
@@ -1906,7 +1881,7 @@
               }, {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["type", "mounts", "mounts-size-limit"],
+                "required": ["type", "mounts", "mounts-budget"],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -1924,7 +1899,7 @@
                     "dynamic": false,
                     "default": []
                   },
-                  "mounts-high-water-pct": {
+                  "evict-mounts-pct": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 0,
@@ -1932,7 +1907,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "mounts-size-limit": {
+                  "mounts-budget": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 1073741824,
@@ -1944,7 +1919,7 @@
               }, {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["type", "mounts", "mounts-size-limit"],
+                "required": ["type", "mounts", "mounts-budget"],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -1962,7 +1937,7 @@
                     "dynamic": false,
                     "default": []
                   },
-                  "mounts-high-water-pct": {
+                  "evict-mounts-pct": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 0,
@@ -1970,7 +1945,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "mounts-size-limit": {
+                  "mounts-budget": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 1073741824,
@@ -1998,42 +1973,17 @@
               }, {
                 "type": "object",
                 "additionalProperties": false,
-                "oneOf": [{
-                  "required": ["type", "devices"]
-                }, {
-                  "required": ["type", "files"]
-                }],
                 "properties": {
                   "type": {
                     "type": "string",
                     "description": "",
                     "dynamic": false,
-                    "default": "device",
-                    "enum": ["device"]
-                  },
-                  "cache-replica-writes": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "",
-                    "dynamic": true
-                  },
-                  "cold-start-empty": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "",
-                    "dynamic": false
+                    "default": "memory",
+                    "enum": ["memory"]
                   },
                   "commit-to-device": {
                     "type": "boolean",
                     "default": false,
-                    "description": "",
-                    "dynamic": false
-                  },
-                  "commit-min-size": {
-                    "type": "integer",
-                    "default": 0,
-                    "minimum": 0,
-                    "maximum": 8388608,
                     "description": "",
                     "dynamic": false
                   },
@@ -2060,9 +2010,11 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "data-in-memory": {
-                    "type": "boolean",
-                    "default": true,
+                  "data-size": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 1073741824,
+                    "maximum": 281474976710656,
                     "description": "",
                     "dynamic": false
                   },
@@ -2144,6 +2096,14 @@
                     "description": "",
                     "dynamic": false
                   },
+                  "evict-used-pct": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "",
+                    "dynamic": true
+                    },
                   "files": {
                     "type": "array",
                     "items": {
@@ -2169,7 +2129,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "max-used-pct": {
+                  "stop-writes-used-pct": {
                     "type": "integer",
                     "default": 70,
                     "minimum": 0,
@@ -2185,7 +2145,208 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "min-avail-pct": {
+                  "stop-writes-avail-pct": {
+                    "type": "integer",
+                    "default": 5,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "tomb-raider-sleep": {
+                    "type": "integer",
+                    "default": 1000,
+                    "minimum": 0,
+                    "maximum": 4294967295,
+                    "description": "",
+                    "dynamic": true
+                  }
+                }
+              }, {
+                "type": "object",
+                "additionalProperties": false,
+                "oneOf": [{
+                  "required": ["type", "devices"]
+                }, {
+                  "required": ["type", "files"]
+                }],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "",
+                    "dynamic": false,
+                    "default": "device",
+                    "enum": ["device"]
+                  },
+                  "cache-replica-writes": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "cold-start-empty": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "commit-to-device": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "compression": {
+                    "type": "string",
+                    "description": "",
+                    "dynamic": true,
+                    "default": "none",
+                    "enum": ["none", "lz4", "snappy", "zstd"]
+                  },
+                  "compression-acceleration": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 1,
+                    "maximum": 65537,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "compression-level": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 1,
+                    "maximum": 9,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "defrag-lwm-pct": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 99,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "defrag-queue-min": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 4294967295,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "defrag-sleep": {
+                    "type": "integer",
+                    "default": 1000,
+                    "minimum": 0,
+                    "maximum": 4294967295,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "defrag-startup-minimum": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 99,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "devices": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "",
+                    "dynamic": false,
+                    "default": []
+                  },
+                  "direct-files": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "disable-odsync": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "enable-benchmarks-storage": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "encryption": {
+                    "type": "string",
+                    "description": "",
+                    "dynamic": false,
+                    "default": "aes-128",
+                    "enum": ["aes-128", "aes-256"]
+                  },
+                  "encryption-key-file": {
+                    "type": "string",
+                    "default": "",
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "encryption-old-key-file": {
+                    "type": "string",
+                    "default": "",
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "evict-used-pct": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "",
+                    "dynamic": true
+                    },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "",
+                    "dynamic": false,
+                    "default": []
+                  },
+                  "filesize": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 1048576,
+                    "maximum": 2199023255552,
+                    "description": "",
+                    "dynamic": false
+                  },
+                  "flush-max-ms": {
+                    "type": "integer",
+                    "default": 1000,
+                    "minimum": 0,
+                    "maximum": 1000,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "stop-writes-used-pct": {
+                    "type": "integer",
+                    "default": 70,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "max-write-cache": {
+                    "type": "integer",
+                    "default": 67108864,
+                    "minimum": 0,
+                    "maximum": 18446744073709551615,
+                    "description": "",
+                    "dynamic": true
+                  },
+                  "stop-writes-avail-pct": {
                     "type": "integer",
                     "default": 5,
                     "minimum": 0,
@@ -2371,7 +2532,15 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "max-used-pct": {
+                  "evict-used-pct": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "",
+                    "dynamic": true
+                    },
+                  "stop-writes-used-pct": {
                     "type": "integer",
                     "default": 70,
                     "minimum": 0,
@@ -2387,7 +2556,7 @@
                     "description": "",
                     "dynamic": true
                   },
-                  "min-avail-pct": {
+                  "stop-writes-avail-pct": {
                     "type": "integer",
                     "default": 5,
                     "minimum": 0,
