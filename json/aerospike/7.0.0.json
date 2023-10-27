@@ -1960,7 +1960,13 @@
               "oneOf": [{
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["type"],
+                "oneOf": [{
+                  "required": ["type", "data-size"]
+                }, {
+                  "required": ["type", "devices"]
+                }, {
+                  "required": ["type", "files"]
+                }],
                 "properties": {
                   "type": {
                     "type": "string",
