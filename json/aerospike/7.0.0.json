@@ -1515,7 +1515,7 @@
             },
             "nsup-period": {
               "type": "integer",
-              "default": 120,
+              "default": 0,
               "minimum": 0,
               "maximum": 4294967295,
               "description": "",
