@@ -255,6 +255,14 @@
             "description": "",
             "dynamic": false
           },
+          "quarantine-allocations": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 100000000,
+            "description": "",
+            "dynamic": false
+          },
           "secrets-address-port": {
             "type": "string",
             "default": "",
@@ -1833,6 +1841,14 @@
                     "description": "",
                     "dynamic": false
                   },
+                  "default-ttl": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 315360000,
+                    "description": "",
+                    "dynamic": true
+                  },
                   "disable-eviction": {
                     "type": "boolean",
                     "default": false,
@@ -2557,12 +2573,6 @@
                     "maximum": 100,
                     "description": "",
                     "dynamic": true
-                  },
-                  "serialize-tomb-raider": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "",
-                    "dynamic": false
                   },
                   "tomb-raider-sleep": {
                     "type": "integer",
