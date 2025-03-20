@@ -55,7 +55,10 @@
           "timezone": { "type": "string" },
           "format": { "type": "string", "enum": ["text", "simple", "json"] },
           "file": { "type": "string" },
-          "levels": { "type": "object" },
+          "levels": {
+            "type": "object",
+            "additionalProperties": { "type": "string", "enum": ["trace", "debug", "info", "warn", "error"] }
+          },
           "max-history": { "type": "integer" },
           "ticker-interval": { "type": "integer" }
         }
@@ -144,15 +147,86 @@
           }
         }
       },
-      "tls": { "type": "object", "additionalProperties": { "type": "object" } },
-      "manage": { "type": "object", "properties": { "ports": { "type": "object" } } },
+      "tls": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "mutual-auth": { "type": "boolean" },
+            "allowed-peer-names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "trust-store": {
+              "type": "object",
+              "properties": {
+                "store-type": { "type": "string", "enum": ["PEM", "JKS"] },
+                "store-file": { "type": "string" },
+                "store-password-file": { "type": "string" },
+                "certificate-files": { "type": "string" }
+              }
+            },
+            "key-store": {
+              "type": "object",
+              "properties": {
+                "store-type": { "type": "string", "enum": ["PEM", "JKS"] },
+                "store-file": { "type": "string" },
+                "store-password-file": { "type": "string" },
+                "key-password-file": { "type": "string" },
+                "certificate-chain-files": { "type": "string" }
+              }
+            },
+            "override-tls-hostname": { "type": "string" }
+          }
+        }
+      },
+      "manage": {
+        "type": "object",
+        "properties": {
+          "ports": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "tls-id": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
       "hnsw": {
         "type": "object",
         "properties": {
           "max-mem-queue-size": { "type": "integer" },
-          "cleanup": { "type": "object" },
-          "batch-merge": { "type": "object" },
-          "healer": { "type": "object" }
+          "cleanup": {
+            "type": "object",
+            "properties": {
+              "dropped-index-cleanup-scheduler-delay": { "type": "integer" },
+              "mark-dropped-index-clean-after": { "type": "integer" },
+              "deleted-index-retention-time": { "type": "integer" }
+            }
+          },
+          "batch-merge": {
+            "type": "object",
+            "properties": {
+              "parallelism": { "type": "integer" },
+              "executor-initial-delay": { "type": "integer" }
+            }
+          },
+          "healer": {
+            "type": "object",
+            "properties": {
+              "schedule": { "type": "string" },
+              "reindex-percent": { "type": "number" }
+            }
+          }
+        }
+      },
+      "record-cache": {
+        "type": "object",
+        "properties": {
+          "expiry": { "type": "integer" },
+          "max-entries": { "type": "integer" }
         }
       }
     },
