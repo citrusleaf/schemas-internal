@@ -1,8 +1,9 @@
 cluster:
   cluster-name: "aerospike-vector-search"
 
-feature-key-file: "/path/to/features.conf"
+feature-key-file: "/etc/aerospike/features.conf"
 
+# Only aerospike OR storage is required, using aerospike here
 aerospike:
   seeds:
     - aerospike-node-1:

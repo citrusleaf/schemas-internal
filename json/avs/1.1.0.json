@@ -1,10 +1,12 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Aerospike Vector Search Configuration Schema",
+    "description": "Configuration schema for Aerospike Vector Search ",
     "type": "object",
     "properties": {
       "cluster": {
         "type": "object",
+        "description": "Main AVS cluster configuration including name, node identification, and roles",
         "required": ["cluster-name"],
         "properties": {
           "cluster-name": { "type": "string" },
@@ -12,9 +14,13 @@
           "node-roles": { "type": "array", "items": { "type": "string" } }
         }
       },
-      "feature-key-file": { "type": "string" },
+      "feature-key-file": { 
+        "type": "string",
+        "description": "Path to the feature key file. The mandatory feature to enable is 'vector-search'."
+      },
       "aerospike": {
         "type": "object",
+        "description": "Storage connection configuration including seed nodes and client policies",
         "required": ["seeds"],
         "properties": {
           "seeds": {
@@ -47,10 +53,12 @@
         }
       },
       "storage": {
-        "$ref": "#/properties/aerospike"
+        "$ref": "#/properties/aerospike",
+        "description": "Alias for aerospike configuration - use either this or 'aerospike' property"
       },
       "logging": {
         "type": "object",
+        "description": "Logging configuration",
         "properties": {
           "timezone": { "type": "string" },
           "format": { "type": "string", "enum": ["text", "simple", "json"] },
@@ -65,6 +73,7 @@
       },
       "heartbeat": {
         "type": "object",
+        "description": "Cluster heartbeat configuration. This is responsible for forming a cluster with other AVS nodes. Required for multi-node clusters.",
         "required": ["seeds"],
         "properties": {
           "seeds": {
@@ -82,6 +91,7 @@
       },
       "interconnect": {
         "type": "object",
+        "description": "Inter-node communication configuration including ports and TLS settings. This defines how other nodes connect to this one.",
         "properties": {
           "client-tls-id": { "type": "string" },
           "ports": {
@@ -106,6 +116,7 @@
       },
       "security": {
         "type": "object",
+        "description": "Security configuration including authentication tokens and credentials",
         "properties": {
           "auth-token": {
             "type": "object",
@@ -121,6 +132,7 @@
       },
       "service": {
         "type": "object",
+        "description": "Service endpoint configuration including ports and advertised listeners",
         "properties": {
           "metadata-namespace": { "type": "string" },
           "ports": {
@@ -149,6 +161,7 @@
       },
       "tls": {
         "type": "object",
+        "description": "TLS/SSL security configuration for various service endpoints",
         "additionalProperties": {
           "type": "object",
           "properties": {
@@ -182,6 +195,7 @@
       },
       "manage": {
         "type": "object",
+        "description": "Management API configuration. This is used to set dynamic config and monitoring ports",
         "properties": {
           "ports": {
             "type": "object",
@@ -196,6 +210,7 @@
       },
       "hnsw": {
         "type": "object",
+        "description": "HNSW  algorithm configuration for vector search. Defines how index is managed and configured",
         "properties": {
           "max-mem-queue-size": { "type": "integer" },
           "cleanup": {
@@ -224,6 +239,7 @@
       },
       "record-cache": {
         "type": "object",
+        "description": "Record caching configuration for performance optimization",
         "properties": {
           "expiry": { "type": "integer" },
           "max-entries": { "type": "integer" }

@@ -21,7 +21,7 @@ aerospike:
     max-conns-per-node: 1000
 
 logging:
-  timezone: "Asia/Calcutta"
+  timezone: "UTC"
   format: "json"
   file: "/var/log/aerospike-vector-search.log"
   levels:
@@ -70,10 +70,10 @@ tls:
     allowed-peer-names:
       - "svc.aerospike.com"
     trust-store:
-      store-type: PEM
+      store-type: "PEM"
       certificate-files: "/etc/aerospike/tls/ca.pem"
     key-store:
-      store-type: PEM
+      store-type: "PEM"
       store-file: "/etc/aerospike/tls/service.key.pem"
       store-password-file: "/etc/aerospike/tls/storepass"
       certificate-chain-files: "/etc/aerospike/tls/service.crt.pem"
@@ -83,10 +83,10 @@ tls:
     allowed-peer-names:
       - "connector.aerospike.com"
     trust-store:
-      store-type: PEM
+      store-type: "PEM"
       certificate-files: "/etc/aerospike/tls/ca.pem"
     key-store:
-      store-type: PEM
+      store-type: "PEM"
       store-file: "/etc/aerospike/tls/interconnect.key.pem"
       store-password-file: "/etc/aerospike/tls/storepass"
       certificate-chain-files: "/etc/aerospike/tls/interconnect.crt.pem"
@@ -95,10 +95,10 @@ tls:
   aerospike-tls:
     mutual-auth: false
     trust-store:
-      store-type: PEM
+      store-type: "PEM"
       certificate-files: "/etc/aerospike/tls/ca.pem"
     key-store:
-      store-type: PEM
+      store-type: "PEM"
       store-file: "/etc/aerospike/tls/aerospike.key.pem"
       store-password-file: "/etc/aerospike/tls/storepass"
       certificate-chain-files: "/etc/aerospike/tls/aerospike.crt.pem"
@@ -121,3 +121,7 @@ hnsw:
   healer:
     schedule: "0 */1 * * * ?"
     reindex-percent: 0.25
+
+record-cache:
+  expiry: 3600
+  max-entries: 1000000
