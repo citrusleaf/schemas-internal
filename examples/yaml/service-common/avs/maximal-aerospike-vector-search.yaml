@@ -2,9 +2,10 @@ cluster:
   cluster-name: "aerospike-vector-search"
   node-id: "a1b2c3"
   node-roles:
-    - "index"
-    - "search"
-
+    - "indexer"
+    - "query"
+    - "standalone-indexer"
+    
 feature-key-file: "/etc/aerospike/features.conf"
 
 aerospike:
