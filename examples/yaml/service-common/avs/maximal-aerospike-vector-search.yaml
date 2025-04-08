@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../../../json/avs/1.1.0.json
 cluster:
   cluster-name: "aerospike-vector-search"
   node-id: "a1b2c3"
@@ -5,10 +6,10 @@ cluster:
     - "indexer"
     - "query"
     - "standalone-indexer"
-    
-feature-key-file: "/etc/aerospike/features.conf"
 
-aerospike:
+feature-key-file: "/etc/aerospike/features.conf"
+# Only aerospike OR storage is required, using storage here
+storage:
   seeds:
     - aerospike-node-1:
         port: 3000
@@ -110,18 +111,19 @@ manage:
     "5040":
       tls-id: "service-tls"
 
-hnsw:
-  max-mem-queue-size: 4000
-  cleanup:
-    dropped-index-cleanup-scheduler-delay: 5000
-    mark-dropped-index-clean-after: 30000
-    deleted-index-retention-time: 50000
-  batch-merge:
-    parallelism: 200
-    executor-initial-delay: 600000
-  healer:
-    schedule: "0 */1 * * * ?"
-    reindex-percent: 0.25
+# Index should be managed from client or asvec
+# hnsw:
+#   max-mem-queue-size: 4000
+#   cleanup:
+#     dropped-index-cleanup-scheduler-delay: 5000
+#     mark-dropped-index-clean-after: 30000
+#     deleted-index-retention-time: 50000
+#   batch-merge:
+#     parallelism: 200
+#     executor-initial-delay: 600000
+#   healer:
+#     schedule: "0 */1 * * * ?"
+#     reindex-percent: 0.25
 
 record-cache:
   expiry: 3600

@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=../../../../json/avs/1.1.0.json
+
 cluster:
   cluster-name: "aerospike-vector-search"
 
@@ -18,3 +20,4 @@ interconnect:
     "5001":
       addresses:
         - "127.0.0.1"
+
