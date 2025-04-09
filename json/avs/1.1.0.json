@@ -1,0 +1,261 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Aerospike Vector Search Configuration Schema",
+    "description": "Configuration schema for Aerospike Vector Search ",
+    "type": "object",
+    "properties": {
+      "cluster": {
+        "type": "object",
+        "description": "Main AVS cluster configuration including name, node identification, and roles",
+        "required": ["cluster-name"],
+        "properties": {
+          "cluster-name": { "type": "string" },
+          "node-id": { "type": "string", "pattern": "^[0-9a-fA-F]+$" },
+          "node-roles": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "feature-key-file": { 
+        "type": "string",
+        "description": "Path to the feature key file. The mandatory feature to enable is 'vector-search'."
+      },
+      "aerospike": {
+        "type": "object",
+        "description": "Storage connection configuration including seed nodes and client policies",
+        "required": ["seeds"],
+        "properties": {
+          "seeds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "port": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "client-policy": {
+            "type": "object",
+            "properties": {
+              "credentials": {
+                "type": "object",
+                "required": ["username", "password-file"],
+                "properties": {
+                  "username": { "type": "string" },
+                  "password-file": { "type": "string" }
+                }
+              },
+              "tls-id": { "type": "string" },
+              "max-conns-per-node": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "storage": {
+        "$ref": "#/properties/aerospike",
+        "description": "Alias for aerospike configuration - use either this or 'aerospike' property"
+      },
+      "logging": {
+        "type": "object",
+        "description": "Logging configuration",
+        "properties": {
+          "timezone": { "type": "string" },
+          "format": { "type": "string", "enum": ["text", "simple", "json"] },
+          "file": { "type": "string" },
+          "levels": {
+            "type": "object",
+            "additionalProperties": { "type": "string", "enum": ["trace", "debug", "info", "warn", "error"] }
+          },
+          "max-history": { "type": "integer" },
+          "ticker-interval": { "type": "integer" }
+        }
+      },
+      "heartbeat": {
+        "type": "object",
+        "description": "Cluster heartbeat configuration. This is responsible for forming a cluster with other AVS nodes. Required for multi-node clusters.",
+        "required": ["seeds"],
+        "properties": {
+          "seeds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["address", "port"],
+              "properties": {
+                "address": { "type": "string" },
+                "port": { "type": "integer" }
+              }
+            }
+          }
+        }
+      },
+      "interconnect": {
+        "type": "object",
+        "description": "Inter-node communication configuration including ports and TLS settings. This defines how other nodes connect to this one.",
+        "properties": {
+          "client-tls-id": { "type": "string" },
+          "ports": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "addresses": {
+                  "oneOf": [
+                    { "type": "string" },
+                    {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  ]
+                },
+                "tls-id": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "security": {
+        "type": "object",
+        "description": "Security configuration including authentication tokens and credentials",
+        "properties": {
+          "auth-token": {
+            "type": "object",
+            "required": ["private-key", "public-key"],
+            "properties": {
+              "private-key": { "type": "string" },
+              "private-key-password": { "type": "string" },
+              "public-key": { "type": "string" },
+              "token-expiry": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "service": {
+        "type": "object",
+        "description": "Service endpoint configuration including ports and advertised listeners",
+        "properties": {
+          "metadata-namespace": { "type": "string" },
+          "ports": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "tls-id": { "type": "string" },
+                "advertised-listeners": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "address": { "type": "string" },
+                        "port": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "tls": {
+        "type": "object",
+        "description": "TLS/SSL security configuration for various service endpoints",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "mutual-auth": { "type": "boolean" },
+            "allowed-peer-names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "trust-store": {
+              "type": "object",
+              "properties": {
+                "store-type": { "type": "string", "enum": ["PEM", "JKS"] },
+                "store-file": { "type": "string" },
+                "store-password-file": { "type": "string" },
+                "certificate-files": { "type": "string" }
+              }
+            },
+            "key-store": {
+              "type": "object",
+              "properties": {
+                "store-type": { "type": "string", "enum": ["PEM", "JKS"] },
+                "store-file": { "type": "string" },
+                "store-password-file": { "type": "string" },
+                "key-password-file": { "type": "string" },
+                "certificate-chain-files": { "type": "string" }
+              }
+            },
+            "override-tls-hostname": { "type": "string" }
+          }
+        }
+      },
+      "manage": {
+        "type": "object",
+        "description": "Management API configuration. This is used to set dynamic config and monitoring ports",
+        "properties": {
+          "ports": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "tls-id": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "hnsw": {
+        "type": "object",
+        "description": "HNSW  algorithm configuration for vector search. Defines how index is managed and configured",
+        "properties": {
+          "max-mem-queue-size": { "type": "integer" },
+          "cleanup": {
+            "type": "object",
+            "properties": {
+              "dropped-index-cleanup-scheduler-delay": { "type": "integer" },
+              "mark-dropped-index-clean-after": { "type": "integer" },
+              "deleted-index-retention-time": { "type": "integer" }
+            }
+          },
+          "batch-merge": {
+            "type": "object",
+            "properties": {
+              "parallelism": { "type": "integer" },
+              "executor-initial-delay": { "type": "integer" }
+            }
+          },
+          "healer": {
+            "type": "object",
+            "properties": {
+              "schedule": { "type": "string" },
+              "reindex-percent": { "type": "number" }
+            }
+          }
+        }
+      },
+      "record-cache": {
+        "type": "object",
+        "description": "Record caching configuration for performance optimization",
+        "properties": {
+          "expiry": { "type": "integer" },
+          "max-entries": { "type": "integer" }
+        }
+      }
+    },
+    "anyOf": [
+      { "required": ["aerospike"] },
+      { "required": ["storage"] }
+    ],
+    "required": [
+      "cluster",
+      "feature-key-file",
+      "service",
+      "interconnect"
+    ],
+    "additionalProperties": false
+}
+  
